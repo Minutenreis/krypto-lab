@@ -1,5 +1,4 @@
 import sys
-import os
 
 # Shifts a character by a given key e [-26,26]
 def shift(charAscii, key):
@@ -29,11 +28,10 @@ if(len(sys.argv) != 4):
     print("Usage: python3 decrypt-add.py <path-to-crypttext> <key> <path-to-output>")
     exit()
 
-dirname = os.path.dirname(__file__)
 
-crypttextfile = os.path.join(dirname,sys.argv[1])
+crypttextfile = sys.argv[1]
 key = int(sys.argv[2])
-plaintextfile = os.path.join(dirname,sys.argv[3])
+plaintextfile = sys.argv[3]
 
 with open(crypttextfile, "r") as crypttextFile:
     crypttext = crypttextFile.read()

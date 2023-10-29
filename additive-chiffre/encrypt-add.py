@@ -1,5 +1,4 @@
 import sys
-import os
 
 # Shifts a character by a given key e [-26,26]
 def shift(charAscii, key):
@@ -29,11 +28,10 @@ if(len(sys.argv) != 4):
     print("Usage: python3 encrypt-add.py <path-to-plaintext> <key> <path-to-output>")
     exit()
 
-dirname = os.path.dirname(__file__)
 
-plaintextfile = os.path.join(dirname,sys.argv[1])
+plaintextfile = sys.argv[1]
 key = int(sys.argv[2])
-ciphertextfile = os.path.join(dirname,sys.argv[3])
+ciphertextfile = sys.argv[3]
 
 with open(plaintextfile, "r") as plaintextFile:
     plaintext = plaintextFile.read()
