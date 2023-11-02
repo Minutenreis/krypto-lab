@@ -73,21 +73,32 @@ def getKeyLength(str):
         coincidenceIndex.append(getCoincidenceIndex(str, keyLength))
     maxIndex = max(coincidenceIndex)
 
-    # find the most likely key length (minimum length within 5% of maxIndex)
+    # find the most likely key length (minimum length within 20% of maxIndex)
     probableMinimumLength = [
         idx
         for idx in possibleKeyLenghts
-        if coincidenceIndex[idx - 1] >= 0.95 * maxIndex
+        if coincidenceIndex[idx - 1] >= 0.80 * maxIndex
     ][0]
     return probableMinimumLength
+
+def getMostCommonChar(str):
+    return max(set(str), key = str.count)
 
 
 # tries to guess the most likely key
 def getMostLikelyKey(str):
     sanitizedStr = re.sub("[^A-Z]", "", str)
     keyLength = getKeyLength(sanitizedStr)
-
-    return []  # todo implement
+    subStrings = []
+    key = []
+    for i in range(keyLength):
+        subStrings.append("")
+    for i in range(len(sanitizedStr)):
+        subStrings[i % keyLength] += sanitizedStr[i]
+    for subString in subStrings:
+        mostCommonChar = getMostCommonChar(subString)
+        key.append((ord(mostCommonChar) - ord('E'))%26) #assume E is most common in each Substring
+    return key
 
 
 # converts number[] to str

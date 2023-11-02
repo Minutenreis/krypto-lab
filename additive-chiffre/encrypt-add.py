@@ -21,9 +21,6 @@ def encrypt(str, key):
         cryptText += cryptChar
     return cryptText
 
-
-        
-
 if(len(sys.argv) != 4):
     print("Usage: python3 encrypt-add.py path-to-plaintext key path-to-output")
     exit()
