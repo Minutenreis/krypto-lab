@@ -2,14 +2,9 @@ import sys
 import re
 
 
-# Shifts a character by a given key e [-26,26]
+# Shifts a character e [A-Z] by a given key
 def shift(charAscii, key):
-    newChar = charAscii + key
-    if newChar > 90:
-        newChar = newChar - 26
-    elif newChar < 65:
-        newChar = newChar + 26
-    return chr(newChar)
+    return chr((charAscii -65 + key)%26 + 65)
 
 
 # Encrypts a char e [A,Z] with a given key e [-26,26]
@@ -32,35 +27,24 @@ def decrypt(str, key):
 
 def IC(str):
     n = len(str)
-    dict = {}
+    # count occurences of each character
+    H = {}
     for char in str:
-        dict[char] = dict.get(char, 0) + 1
-    sum = 0
-    for key in dict:
-        sum += dict[key] * (dict[key] - 1)
-    return sum / (n * (n - 1))
+        H[char] = H.get(char, 0) + 1
+    
+    # calculate and return index of coincidence
+    return sum([H[chr] * (H[chr] - 1) for chr in H])/ (n * (n - 1))
 
 
 def getCoincidenceIndex(str, keyLength):
-    subStrings = []
-    coincidenceIndexOfSubstrings = []
-
     # split string into substrings
-    for i in range(keyLength):
-        subStrings.append("")
-    for i in range(len(str)):
-        subStrings[i % keyLength] += str[i]
+    subStrings = [str[i::keyLength] for i in range(keyLength)]
 
     # calculate coincidence index for each substring
-    for subString in subStrings:
-        coincidenceIndexOfSubstrings.append(IC(subString))
-
-    # calculate average coincidence index
-    avgCoincidenceIndex = 0
-    for coincidenceIndex in coincidenceIndexOfSubstrings:
-        avgCoincidenceIndex += coincidenceIndex
-    avgCoincidenceIndex /= len(coincidenceIndexOfSubstrings)
-    return avgCoincidenceIndex
+    coincidenceIndexOfSubstrings = [IC(subString) for subString in subStrings]
+    
+    # calculate and return average coincidence index
+    return sum(coincidenceIndexOfSubstrings) / len(coincidenceIndexOfSubstrings)
 
 
 # get Key Length by calculating the coincidence index
@@ -68,16 +52,14 @@ def getKeyLength(str):
     possibleKeyLenghts = range(1, 101)
 
     # calculate coincidence index for each possible key length
-    coincidenceIndex = []
-    for keyLength in possibleKeyLenghts:
-        coincidenceIndex.append(getCoincidenceIndex(str, keyLength))
+    coincidenceIndex = [getCoincidenceIndex(str, keyLength) for keyLength in possibleKeyLenghts]
     maxIndex = max(coincidenceIndex)
 
     # find the most likely key length (minimum length within 20% of maxIndex)
     probableMinimumLength = [
-        idx
-        for idx in possibleKeyLenghts
-        if coincidenceIndex[idx - 1] >= 0.80 * maxIndex
+        keyLength
+        for keyLength in possibleKeyLenghts
+        if coincidenceIndex[keyLength - 1] >= 0.80 * maxIndex
     ][0]
     return probableMinimumLength
 
@@ -87,21 +69,21 @@ def getMostCommonChar(str):
 
 # tries to guess the most likely key
 def getMostLikelyKey(str):
+    # clean of non [A-Z] charcters
     sanitizedStr = re.sub("[^A-Z]", "", str)
+    
     keyLength = getKeyLength(sanitizedStr)
-    subStrings = []
+    subStrings = [sanitizedStr[i::keyLength] for i in range(keyLength)]
+    
+    # get key for all subStrings
     key = []
-    for i in range(keyLength):
-        subStrings.append("")
-    for i in range(len(sanitizedStr)):
-        subStrings[i % keyLength] += sanitizedStr[i]
     for subString in subStrings:
         mostCommonChar = getMostCommonChar(subString)
         key.append((ord(mostCommonChar) - ord('E'))%26) #assume E is most common in each Substring
     return key
 
 
-# converts number[] to str
+# converts number[] to str (0-25) -> (A-Z)
 def numberArrayToString(numberArray):
     str = ""
     for number in numberArray:
@@ -121,5 +103,6 @@ with open(crypttextfile, "r") as crypttextFile:
     crypttext = crypttextFile.read()
     key = getMostLikelyKey(crypttext)
     plaintext = decrypt(crypttext, key)
+    
     with open(plaintextfile, "w") as plaintextFile:
         plaintextFile.write(numberArrayToString(key) + "\n" + plaintext)

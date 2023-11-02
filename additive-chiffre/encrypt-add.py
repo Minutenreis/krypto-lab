@@ -1,14 +1,8 @@
 import sys
 
-# Shifts a character by a given key e [-26,26]
+# Shifts a character e [A-Z] by a given key
 def shift(charAscii, key):
-    newChar = charAscii + key
-    if(newChar > 90):
-        newChar = newChar - 26
-    elif(newChar < 65):
-        newChar = newChar + 26
-    return chr(newChar)
-    
+    return chr((charAscii -65 + key)%26 + 65)
 
 # Encrypts a string with a given key e [-26,26]
 def encrypt(str, key):
@@ -33,5 +27,6 @@ ciphertextfile = sys.argv[3]
 with open(plaintextfile, "r") as plaintextFile:
     plaintext = plaintextFile.read()
     crypttext = encrypt(plaintext, key)
+    
     with open(ciphertextfile, "w") as cyphertextFile:
         cyphertextFile.write(crypttext)
