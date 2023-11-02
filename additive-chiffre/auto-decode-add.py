@@ -25,7 +25,7 @@ def getMostCommonChar(str):
     return max(set(str), key = str.count)
 
 if(len(sys.argv) != 3 and len(sys.argv) != 2):
-    print("Usage: python3 auto-decode.py <path-to-crypttext> <optional-path-to-output>")
+    print("Usage: python3 auto-decode-add.py path-to-crypttext [path-to-output]")
     exit()
 
 

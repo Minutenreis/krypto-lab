@@ -25,7 +25,7 @@ def decrypt(str, key):
         
 
 if(len(sys.argv) != 4):
-    print("Usage: python3 decrypt-add.py <path-to-crypttext> <key> <path-to-output>")
+    print("Usage: python3 decrypt-add.py path-to-crypttext key path-to-output")
     exit()
 
 
