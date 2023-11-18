@@ -155,12 +155,12 @@ def decrypt(text: str, key: str) -> str:
     
     textBlock = addRoundKey(textBlock, keyBlock[10])
     for i in range(9, 0, -1):
-        textBlock = invShiftRows(textBlock)
         textBlock = invSubBytes(textBlock)
+        textBlock = invShiftRows(textBlock)
         textBlock = addRoundKey(textBlock, keyBlock[i])
         textBlock = invMixColumns(textBlock)
-    textBlock = invShiftRows(textBlock)
     textBlock = invSubBytes(textBlock)
+    textBlock = invShiftRows(textBlock)
     textBlock = addRoundKey(textBlock, keyBlock[0])
     return blockToString(textBlock)
     
