@@ -149,7 +149,7 @@ def encrypt(text: str, key: list[str]) -> str:
     textBlock = addRoundKey(textBlock, keyBlock[10])
     return blockToString(textBlock)
 
-def decrypt(text: str, key: str) -> str:
+def decrypt(text: str, key: list[str]) -> str:
     textBlock : list[list[str]] = convertToBlock(text)
     keyBlock : list[list[list[str]]] = [convertToBlock(line) for line in key]
     
