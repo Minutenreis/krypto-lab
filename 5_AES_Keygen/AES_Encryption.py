@@ -293,7 +293,7 @@ if len(sys.argv) != 5 and len(sys.argv) != 6:
     print("Usage: python3 AES_Encryption.py <mode> <input file> <key file> <output file> <optional: initVec file>")
     sys.exit(1)
 
-mode = sys.argv[1].upper() # ECB, CBC, OFB, COUNTER
+mode = sys.argv[1].upper() # ECB, CBC, OFB, CTR
 
 if len(sys.argv) != 6 and mode != 'ECB':
     print("Initvector file required for mode " + mode)
@@ -315,15 +315,15 @@ with open(outputFile, 'w') as f:
         f.write(binaryToHex(encryptECB(inputText, key)))
     elif mode == 'CBC':
         with open(initVecFile, 'r') as f2:
-            initVec = binaryToHex(f2.read())
+            initVec = hexToBinary(f2.read())
         f.write(binaryToHex(encryptCBC(inputText, initVec, key)))
     elif mode == 'OFB':
         with open(initVecFile, 'r') as f2:
-            initVec = binaryToHex(f2.read())
+            initVec = hexToBinary(f2.read())
         f.write(binaryToHex(encryptOFB(inputText, initVec, key)))
-    elif mode == 'COUNTER':
+    elif mode == 'CTR':
         with open(initVecFile, 'r') as f2:
-            initVec = binaryToHex(f2.read())
+            initVec = hexToBinary(f2.read())
         f.write(binaryToHex(encryptCounter(inputText, initVec, key)))
     else:
         print("Invalid mode")

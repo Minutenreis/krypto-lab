@@ -102,7 +102,7 @@ print(bytes)
 # mode = sys.argv[1].upper() # ECB, CBC, OFB, COUNTER
 # keyLength = int(sys.argv[2]) # 128, 192, 256
 
-mode = "COUNTER"
+mode = "CTR"
 encrypt = True
 key = '10101010'
 nullVec= '0'*len(key)
@@ -119,7 +119,7 @@ elif mode == "CBC":
 elif mode == "OFB":
     ciphertext = encryptOFB(bytes, initVec, key)
     decipheredText = decryptOFB(ciphertext, initVec, key)
-elif mode == "COUNTER":
+elif mode == "CTR":
     ciphertext = encryptCounter(bytes, nullVec, key)
     decipheredText = decryptCounter(ciphertext, nullVec, key)
 print(ciphertext)
