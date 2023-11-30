@@ -33,7 +33,7 @@ def spn(input: str, k: str) -> str:
     output = ""
     for x in xBlocks:
         w = x
-        for r in range(1,3):
+        for r in [1,2,3]:
             u = xor(w, k)
             v = SBox(u)
             w = permute(v)
