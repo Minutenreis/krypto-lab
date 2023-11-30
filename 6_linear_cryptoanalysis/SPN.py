@@ -1,7 +1,8 @@
 import sys
+import re
 
 def hexToBinary(hex: str) -> str:
-    hex = hex.replace(' ', '')
+    hex = re.sub(r"[^a-f0-9]", '', hex)
     return ''.join(format(int(hex[i:i+2], 16), '08b') for i in range(0, len(hex), 2))
 
 def binaryToHex(binary: str) -> str:
