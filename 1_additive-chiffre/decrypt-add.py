@@ -16,13 +16,10 @@ def decrypt(str, key):
         cryptText += cryptChar
     return cryptText
 
-
-        
-
+# main
 if(len(sys.argv) != 4):
     print("Usage: python3 decrypt-add.py path-to-crypttext key path-to-output")
     exit()
-
 
 crypttextfile = sys.argv[1]
 key = int(sys.argv[2])
@@ -32,5 +29,5 @@ with open(crypttextfile, "r") as crypttextFile:
     crypttext = crypttextFile.read()
     plaintext = decrypt(crypttext, key)
     
-    with open(plaintextfile, "w") as plaintextFile:
-        plaintextFile.write(plaintext)
+with open(plaintextfile, "w") as plaintextFile:
+    plaintextFile.write(plaintext)

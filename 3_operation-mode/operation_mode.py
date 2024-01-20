@@ -86,15 +86,17 @@ def decryptOFB(ciphertext:str, initVec:str, key:str)-> bytes:
 def decryptCounter(ciphertext:str, initVec:str, key:str)-> bytes:
     return encryptCounter(ciphertext, initVec, key)
 
+# convert a text to a binary string
 def textToBinary(text:str) -> str:
     return ''.join(format(i, '08b') for i in bytearray(text, encoding ='utf-8'))
 
+# convert a binary string to a text
 def binaryToText(binary:str) -> str:
     intArray = [int(binary[i:i+8], 2) for i in range(0, len(binary), 8)]
     byteArray = bytearray(intArray)
     return str(byteArray, encoding ='utf-8')
 
-
+# main (just for tests)
 plainText = "Hellö World!"
 bytes = textToBinary(plainText)
 print(plainText)

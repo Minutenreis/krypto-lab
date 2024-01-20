@@ -1,6 +1,7 @@
 import sys
 import random
 
+# calculates phi(n = p * q) of 2 primes p and q
 def phi(prime1, prime2):
     return (prime1 - 1) * (prime2 - 1)
 
@@ -61,6 +62,7 @@ def isPrime(n, rounds):
 
 iList = [1,7,11,13,17,19,23,29]
 
+# generates a prime number
 def generatePrime(length):
     z = random.randint(2**(length-1), 2**length-1)
     iIndex = 0
@@ -73,7 +75,18 @@ def generatePrime(length):
             return n
         if (iIndex % len(iList) == 0):
             z += 1
- 
+
+# generate public and private key as ((e,n),(d,n))
+def genKeys(p,q):
+    n = p * q
+    phiN = phi(p, q)
+    e = 2**16 + 1 # todo: sollte es tatsächlich zufällig sein?
+    while (expandedEuclid(e, phiN)[0] != 1):
+        e = random.randint(2, phiN-1)
+    d = expandedEuclid(e, phiN)[1] % phiN
+    return ((e,n), (d,n))
+
+# main
 if (len(sys.argv) != 5):
     print("Usage: python3 RSA_keygen.py <length> <output_private_key> <output_public_key> <output_primes>")
     exit(1)
@@ -86,14 +99,10 @@ output_primes = sys.argv[4]
 # generate two primes
 p = generatePrime(length)
 q = generatePrime(length)
-phiPQ = phi(p, q)
-e = 2**16 + 1 # todo: sollte es tatsächlich zufällig sein?
-while (expandedEuclid(e, phiPQ)[0] != 1):
-    e = random.randint(2, phiPQ-1)
-d = expandedEuclid(e, phiPQ)[1] % phiPQ
+(e, n), (d, n) = genKeys(p,q)
 with open(output_private_key, "w") as f:
-    f.write(str(d) + "\n" + str(phiPQ))
+    f.write(str(d) + "\n" + str(n))
 with open(output_public_key, "w") as f:
-    f.write(str(e) + "\n" + str(phiPQ))
+    f.write(str(e) + "\n" + str(n))
 with open(output_primes, "w") as f:
     f.write(str(p) + "\n" + str(q))

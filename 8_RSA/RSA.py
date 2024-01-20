@@ -1,8 +1,10 @@
 import sys
 
+# converts integer to binary string
 def intToBinary(x):
     return bin(x)[2:]
 
+# RSA
 def rsa(x:int, e:int, n:int) -> int:
     y = 1;
     eBin = intToBinary(e)
@@ -13,6 +15,7 @@ def rsa(x:int, e:int, n:int) -> int:
         x = (x * x) % n
     return y
 
+# main
 if (len(sys.argv) != 4):
     print("Usage: python3 RSA.py <input_file> <key_file> <output_file>")
     exit(1)

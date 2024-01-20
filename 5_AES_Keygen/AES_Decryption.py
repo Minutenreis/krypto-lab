@@ -1,7 +1,7 @@
 import AES_Encryption
 import sys
 
-
+# main (all the functions are in AES_Encryption.py)
 if len(sys.argv) != 5 and len(sys.argv) != 6:
     print("Usage: python3 AES_Encryption.py <mode> <input file> <key file> <output file> <optional: initVec file>")
     sys.exit(1)

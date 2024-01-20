@@ -63,6 +63,7 @@ def getKeyLength(str):
     ][0]
     return probableMinimumLength
 
+# get the character that occurs most often in a string
 def getMostCommonChar(str):
     return max(set(str), key = str.count)
 
@@ -90,19 +91,21 @@ def numberArrayToString(numberArray):
         str += chr(number + 65)
     return str
 
+def autoDecodeViginere(str) -> (int, str):
+    key = getMostLikelyKey(str)
+    return (key, decrypt(str, key))
 
+# main
 if len(sys.argv) != 3:
     print("Usage: python3 auto-decode-viginere.py path-to-crypttext path-to-output")
     exit()
-
 
 crypttextfile = sys.argv[1]
 plaintextfile = sys.argv[2]
 
 with open(crypttextfile, "r") as crypttextFile:
     crypttext = crypttextFile.read()
-    key = getMostLikelyKey(crypttext)
-    plaintext = decrypt(crypttext, key)
+    (key, plaintext) = autoDecodeViginere(crypttext)
     
-    with open(plaintextfile, "w") as plaintextFile:
-        plaintextFile.write(numberArrayToString(key) + "\n" + plaintext)
+with open(plaintextfile, "w") as plaintextFile:
+    plaintextFile.write(numberArrayToString(key) + "\n" + plaintext)

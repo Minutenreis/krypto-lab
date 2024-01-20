@@ -2,12 +2,16 @@ import os
 import sys
 import re
 
+# convert a hex string to a binary string
 def hexToBinary(hex: str) -> str:
     hex = re.sub(r"[^a-f0-9]", '', hex)
     return ''.join(format(int(hex[i:i+2], 16), '08b') for i in range(0, len(hex), 2))
 
+# convert a binary string to a hex string
 def binaryToHex(binary: str) -> str:
     return ' '.join(''.join([hex(int(binary[i:i+4], 2))[2:],hex(int(binary[i+4:i+8], 2))[2:]]) for i in range(0, len(binary), 8))
+
+# get the sBox and sBoxInv from the files
 
 dir = os.path.dirname(__file__)
 sBoxFile = os.path.join(dir, 'SBox.txt')
@@ -39,6 +43,7 @@ matrixDecrypt = [[14,11,13,9],[9,14,11,13],[13,9,14,11],[11,13,9,14]]
 def addGalois(a: str, b:str):
     return xor(a, b)
 
+# doubles an 8-bit binary string in galois field
 def doubleGalois(a: str):
     t = a[1:8] + "0"
     if a[0] == '1':
@@ -66,6 +71,7 @@ def mulGalois(a: str, b:int):
             sum = addGalois(sum,listRight[i])
     return sum
 
+# matrix multiplication in galois field
 def matMulGalois(matrix: list[list[int]], col: list[str]) -> str:
     mixed = []
     for i in range(4):
@@ -115,9 +121,11 @@ def invShiftRows(text: list[list[str]]) -> list[list[str]]:
             shifted[i].append(text[(i-j) % 4][j])
     return shifted
 
+# mix the columns of the block
 def mixColumns(text: list[list[str]]) -> list[list[str]]:
     return [matMulGalois(matrixEncrypt, text[i]) for i in range(4)]
 
+# inverse mix the columns of the block
 def invMixColumns(text: list[list[str]]) -> list[list[str]]:
     return [matMulGalois(matrixDecrypt, text[i]) for i in range(4)]
 
@@ -131,6 +139,7 @@ def convertToBlock(text: str) -> list[list[str]]:
             block[i].append(text[((i*4+j)*8):((i*4+(j+1))*8)])
     return block
 
+# convert a 4x4 block to a string
 def blockToString(block: list[list[str]]) -> str:
     return ''.join(''.join(block[i][j] for j in range(4)) for i in range(4))
 
@@ -165,7 +174,7 @@ def keyExpansion(key: str) -> list[str]:
     keys = [''.join(words[i:i+4]) for i in range(0, len(words), 4)]
     return keys
 
-# text and key are 128-bit binary strings (16 byte)
+# encrypts 128-bit binary strings (both text and key are 128-bit) (16 byte)
 def encrypt(text: str, key: str) -> str:
     textBlock : list[list[str]] = convertToBlock(text)
     keyBlock : list[list[list[str]]] = [convertToBlock(roundKey) for roundKey in keyExpansion(key)]
@@ -181,6 +190,7 @@ def encrypt(text: str, key: str) -> str:
     textBlock = addRoundKey(textBlock, keyBlock[10])
     return blockToString(textBlock)
 
+# decrypts 128-bit binary strings (both text and key are 128-bit) (16 byte)
 def decrypt(text: str, key: str) -> str:
     textBlock : list[list[str]] = convertToBlock(text)
     keyBlock : list[list[list[str]]] = [convertToBlock(roundKey) for roundKey in keyExpansion(key)]
@@ -282,14 +292,17 @@ def decryptOFB(ciphertext:str, initVec:str, key:str)-> bytes:
 def decryptCounter(ciphertext:str, initVec:str, key:str)-> bytes:
     return encryptCounter(ciphertext, initVec, key)
 
+# convert a text to a binary string
 def textToBinary(text:str) -> str:
     return ''.join(format(i, '08b') for i in bytearray(text, encoding ='utf-8'))
 
+# convert a binary string to a text
 def binaryToText(binary:str) -> str:
     intArray = [int(binary[i:i+8], 2) for i in range(0, len(binary), 8)]
     byteArray = bytearray(intArray)
     return str(byteArray, encoding ='utf-8')
 
+# main
 if len(sys.argv) != 5 and len(sys.argv) != 6:
     print("Usage: python3 AES_Encryption.py <mode> <input file> <key file> <output file> <optional: initVec file>")
     sys.exit(1)

@@ -28,6 +28,7 @@ def stringToNumberArray(str):
         numberArray.append(ord(char) - 65)
     return numberArray
 
+# main
 if(len(sys.argv) != 4):
     print("Usage: python3 encrypt-add.py path-to-plaintext key path-to-output")
     exit()
@@ -40,5 +41,5 @@ with open(plaintextfile, "r") as plaintextFile:
     plaintext = plaintextFile.read()
     crypttext = encrypt(plaintext, key)
     
-    with open(ciphertextfile, "w") as cyphertextFile:
-        cyphertextFile.write(crypttext)
+with open(ciphertextfile, "w") as cyphertextFile:
+    cyphertextFile.write(crypttext)

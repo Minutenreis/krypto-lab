@@ -15,13 +15,20 @@ def decrypt(str, key):
         cryptText += cryptChar
     return cryptText
 
+# Decrypts a string with guessing the key
+def autoDecodeAdd(str) -> (int, str):
+    mostCommonChar = getMostCommonChar(str)
+    key = (ord(mostCommonChar) - ord('E'))%26 #assume E is most common in German
+    return (key, decrypt(str, key))
+
+# get the character that occurs most often in a string
 def getMostCommonChar(str):
     return max(set(str), key = str.count)
 
+# main
 if(len(sys.argv) != 3 and len(sys.argv) != 2):
     print("Usage: python3 auto-decode-add.py path-to-crypttext [path-to-output]")
     exit()
-
 
 crypttextfile = sys.argv[1]
 if(len(sys.argv) == 3):
@@ -31,9 +38,8 @@ else:
 
 with open(crypttextfile, "r") as crypttextFile:
     crypttext = crypttextFile.read()
-    mostCommonChar = getMostCommonChar(crypttext)
-    key = (ord(mostCommonChar) - ord('E'))%26 #assume E is most common in German
-    plaintext = decrypt(crypttext, key)
-    with open(plaintextfile, "w") as plaintextFile:
+    (key, plaintext) = autoDecodeAdd(crypttext)
+
+with open(plaintextfile, "w") as plaintextFile:
         plaintextFile.write(str(key)+"\n"+plaintext)
     

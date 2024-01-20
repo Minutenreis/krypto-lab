@@ -15,10 +15,10 @@ def encrypt(str, key):
         cryptText += cryptChar
     return cryptText
 
+# main
 if(len(sys.argv) != 4):
     print("Usage: python3 encrypt-add.py path-to-plaintext key path-to-output")
     exit()
-
 
 plaintextfile = sys.argv[1]
 key = int(sys.argv[2])
@@ -28,5 +28,5 @@ with open(plaintextfile, "r") as plaintextFile:
     plaintext = plaintextFile.read()
     crypttext = encrypt(plaintext, key)
     
-    with open(ciphertextfile, "w") as cyphertextFile:
-        cyphertextFile.write(crypttext)
+with open(ciphertextfile, "w") as cyphertextFile:
+    cyphertextFile.write(crypttext)
