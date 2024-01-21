@@ -67,14 +67,13 @@ def generatePrime(length):
     z = random.randint(2**(length-1), 2**length-1)
     iIndex = 0
     while(True):
-        n = 30*z + iList[iIndex % len(iList)]
+        n = 30*(z+iIndex//len(iList)) + iList[iIndex % len(iList)]
         # check multiple times if prime
         # P(FalsePositive) < 1/4^100 = 6.223015 × 10^-61
         # if length > 26 then n>10^9 and P(FalsePositive) < (10^-6)^100 = 10^-600 see https://core.ac.uk/download/pdf/197479038.pdf
         if (isPrime(n,100)):
             return n
-        if (iIndex % len(iList) == 0):
-            z += 1
+        iIndex += 1
 
 # generate public and private key as ((e,n),(d,n))
 def genKeys(p,q):

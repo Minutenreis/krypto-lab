@@ -13,8 +13,8 @@ Argumente sind wie folgt angegeben: \
 `argument` => Argument das angegeben werden muss \
 `[argument]` => Optionales Argument
 
-Die Korrektheit der Programme wird mit Unittests sichergestellt.
-Alle Programme haben mind. einen Unittest in den Files mit der Endung `.test.py`.
+Die Korrektheit der Programme wird mit Unittests sichergestellt (selbstgeschrieben, nicht konform zu einem Framework).
+Alle Programme haben mindestens einen Unittest in den Files mit der Endung `.test.py`.
 (Ausnahme: operation_mode.py da dies nur Vorarbeit für AES_Keygen war).
 Wenn man alle Unittests ausführen will, muss man `python3 run-tests.py` im Grundverzeichniss ausführen. 
 
@@ -72,5 +72,7 @@ Entschlüsseln:
 
 ### Diffie-Hellman-Schlüsselaustausch (/10_Diffie_Hellman)
 
-<!-- TODO -->
+`python3 diffie_hellman.py keylength [output_file]`
+
+Note: output_file ist nur für meine Unittests gedacht und folgt nicht der Formattierung des Outputs in der Aufgabe
 
