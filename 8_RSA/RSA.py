@@ -17,7 +17,7 @@ def rsa(x:int, e:int, n:int) -> int:
 
 # main
 if (len(sys.argv) != 4):
-    print("Usage: python3 RSA.py <input_file> <key_file> <output_file>")
+    print("Usage: python3 RSA.py input_file key_file output_file")
     exit(1)
     
 input_file = sys.argv[1]

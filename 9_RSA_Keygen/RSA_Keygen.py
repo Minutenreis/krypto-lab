@@ -82,13 +82,13 @@ def genKeys(p,q):
     phiN = phi(p, q)
     e = 2**16 + 1 # todo: sollte es tatsächlich zufällig sein?
     while (expandedEuclid(e, phiN)[0] != 1):
-        e = random.randint(2, phiN-1)
+        e = random.randint(3, phiN-1)
     d = expandedEuclid(e, phiN)[1] % phiN
     return ((e,n), (d,n))
 
 # main
 if (len(sys.argv) != 5):
-    print("Usage: python3 RSA_keygen.py <length> <output_private_key> <output_public_key> <output_primes>")
+    print("Usage: python3 RSA_keygen.py length output_private_key output_public_key output_primes")
     exit(1)
     
 length = int(sys.argv[1])

@@ -304,15 +304,21 @@ def binaryToText(binary:str) -> str:
 
 # main
 if len(sys.argv) != 5 and len(sys.argv) != 6:
-    print("Usage: python3 AES_Encryption.py <mode> <input file> <key file> <output file> <optional: initVec file>")
+    print("Usage: python3 AES_Encryption.py mode input_file key_file output_file [initVec_file]")
     sys.exit(1)
 
 mode = sys.argv[1].upper() # ECB, CBC, OFB, CTR
 
-if len(sys.argv) != 6 and mode != 'ECB':
+if mode not in ['ECB', 'CBC', 'OFB', 'CTR']:
+    print("Unknown mode: " + mode)
+    sys.exit(1)
+elif len(sys.argv) != 6 and mode != 'ECB':
     print("Initvector file required for mode " + mode)
     sys.exit(1)
-    
+elif mode == 'ECB' and len(sys.argv) == 6:
+    print("Initvector file not required for mode " + mode)
+    sys.exit(1)
+
 inputFile = sys.argv[2]
 keyFile = sys.argv[3]
 outputFile = sys.argv[4]
@@ -339,6 +345,3 @@ with open(outputFile, 'w') as f:
         with open(initVecFile, 'r') as f2:
             initVec = hexToBinary(f2.read())
         f.write(binaryToHex(encryptCounter(inputText, initVec, key)))
-    else:
-        print("Invalid mode")
-        sys.exit(1)
