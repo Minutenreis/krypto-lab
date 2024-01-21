@@ -85,9 +85,8 @@ S = pow(B, a, p)
 if(output_file):
     with open(output_file, "w") as f:
         f.write(str(p) + "\n" + str(g) + "\n" + str(a) + "\n" + str(b) + "\n" + str(A) + "\n" + str(B) + "\n" + str(S))
-else:
-    print(p)
-    print(g)
-    print(A)
-    print(B)
-    print(S)
+print(p)
+print(g)
+print(A)
+print(B)
+print(S)

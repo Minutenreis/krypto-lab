@@ -1,11 +1,12 @@
 import sys
 import re
 
-# 
+# converts hex string to binary string
 def hexToBinary(hex: str) -> str:
     hex = re.sub(r"[^a-f0-9]", '', hex)
     return ''.join(format(int(hex[i:i+2], 16), '08b') for i in range(0, len(hex), 2))
 
+# converts binary string to hex string
 def binaryToHex(binary: str) -> str:
     return ' '.join(''.join([hex(int(binary[i:i+4], 2))[2:],hex(int(binary[i+4:i+8], 2))[2:],hex(int(binary[i+8:i+12], 2))[2:],hex(int(binary[i+12:i+16], 2))[2:]]) for i in range(0, len(binary), 16))
 
@@ -50,7 +51,7 @@ def spn(input: str, k: str) -> str:
 
 # main
 if len(sys.argv) != 4:
-    print("Usage: python3 SPN.py <input file> <key file> <output file>")
+    print("Usage: python3 SPN.py input_file key_file output_file")
     sys.exit(1)
 
 inputFile = sys.argv[1]

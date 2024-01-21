@@ -11,7 +11,7 @@ Jedes Programm printed seine Argumente sollte man es ohne aufrufen (hier sollten
 Argumente sind wie folgt angegeben: \
 `python3 program.py` => Aufruf des Programs \
 `argument` => Argument das angegeben werden muss \
-`[argument]` => Optionales Argument
+`[argument]` => Optionales Argument (meist für meine Unit Tests)
 
 Die Korrektheit der Programme wird mit Unittests sichergestellt (selbstgeschrieben, nicht konform zu einem Framework).
 Alle Programme haben mindestens einen Unittest in den Files mit der Endung `.test.py`.
@@ -60,7 +60,21 @@ Entschlüsseln:
 
 ### Lineare Kryptoanalyse (/6_linear_cryptoanalysis)
 
-<!-- TODO -->
+Substitutions-Permutations-Netz:
+
+`python3 SPN.py input_file key_file output_file`
+
+Viele Klartexte generieren für Teilschlüsselsuche:
+
+`python3 generateExampleTexts.py plaintext_file number_of_texts`
+
+Linearisierungsangriff (Teilschlüsselsuche):
+
+`python3 LinApprox.py plaintexts.txt ciphertexts.txt [output_file]`
+
+### Güte von Approximationen bestimmen (/7_Quality_approximation)
+
+`python3 SPN.py sBox_file approximation_file [output_file]`
 
 ### RSA (/8_RSA)
 
