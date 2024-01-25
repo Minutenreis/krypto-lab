@@ -18,8 +18,8 @@ def decompose(n):
 def millerRabin(n):
     (k, m) = decompose(n-1)
     # you could deterministicly test this if n < 3,317,044,064,679,887,385,961,981 was known see https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
-    a = random.randint(2, n-1) # todo: sollte es nicht n-2 sein?
-    b = pow(a, m, n) # todo: sollen wir hier die RSA funktion verwenden?
+    a = random.randint(2, n-1)
+    b = pow(a, m, n)
     if b % n == 1:
         return True
     for _ in range(k):
@@ -79,7 +79,7 @@ def generatePrime(length):
 def genKeys(p,q):
     n = p * q
     phiN = phi(p, q)
-    e = 2**16 + 1 # todo: sollte es tatsächlich zufällig sein?
+    e = 2**16 + 1
     while (expandedEuclid(e, phiN)[0] != 1):
         e = random.randint(3, phiN-1)
     d = expandedEuclid(e, phiN)[1] % phiN

@@ -18,7 +18,8 @@ def hexToBinary(hex: str) -> str:
 def intTo4BitBinary(i: int) -> str:
     return format(i, '04b')
 
-def calcQuality(sBox, U, V, approximation):
+# calculates the quality of the approximation
+def calcQuality(U, V, approximation):
     T = 1
     for i in range(4):
         L = 0
@@ -58,7 +59,7 @@ with open(approximationFile, 'r') as f:
         exit(0)
     approximation = [hexToBinary(approximation[1]), hexToBinary(approximation[5]), hexToBinary(approximation[9]), hexToBinary(approximation[11])]
 
-quality = calcQuality(sBox, U, V, approximation)
+quality = calcQuality(U, V, approximation)
 print(quality)
 if output_file:
     with open(output_file, 'w') as f:

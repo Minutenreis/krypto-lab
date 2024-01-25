@@ -13,8 +13,8 @@ def decompose(n):
 #return True if n is prime, else False
 def millerRabin(n):
     (k, m) = decompose(n-1)
-    a = random.randint(2, n-1) # todo: sollte es nicht n-2 sein?
-    b = pow(a, m, n) # todo: sollen wir hier die RSA funktion verwenden?
+    a = random.randint(2, n-1)
+    b = pow(a, m, n)
     if b % n == 1:
         return True
     for _ in range(k):
