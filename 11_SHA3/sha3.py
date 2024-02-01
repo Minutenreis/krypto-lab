@@ -14,14 +14,25 @@ c = 448
 # Block width: b = c + r = 1600 bits
 b = c + r
 
-# converts hex string to binary string
-def hexToBinary(hex: str) -> str:
-    hex = re.sub(r"[^A-Fa-f0-9]", '', hex)
-    return ''.join(format(int(hex[i], 16), '04b') for i in range(0, len(hex), 1))
+def cleanHex(hex):
+    return re.sub(r"[^A-Fa-f0-9]", '', hex).lower()
 
-# converts binary string to hex string
-def binaryToHex(binary: str) -> str:
-    return ''.join(''.join([hex(int(binary[i:i+4], 2))[2:]]) for i in range(0, len(binary), 4))
+def cleanBinary(binary):
+    return re.sub(r"[^01]", '', binary)
+
+def convert2HexTo8Bit(hex):
+    return bin(int(hex, 16))[2:].zfill(8)[::-1]
+
+def convertHexToBinary(hex):
+    hex = cleanHex(hex)
+    return "".join([convert2HexTo8Bit(hex[i:i+2]) for i in range(0, len(hex), 2)])
+
+def convert8BitTo2Hex(binary):
+    return hex(int(binary[::-1], 2))[2:].zfill(2)
+
+def convertBinaryToHex(binary):
+    binary = cleanBinary(binary)
+    return "".join([convert8BitTo2Hex(binary[i:i+8]) for i in range(0, len(binary), 8)])
 
 # XOR n binary strings of the same length
 def xor(*args):
@@ -41,22 +52,23 @@ rotationFile = os.path.join(dir, 'rotations.txt')
 roundConstantsFile = os.path.join(dir, 'roundConstants.txt')
 
 # rotation[i][j] = rotation[i+j*5]
-rotation = []
-
-with open(rotationFile, "r") as file:
-    rotation = " ".join(file.read().split("\n")).split(", ")
-    rotation = [int(x) for x in rotation]
+rotation = [[0, 1, 62, 28, 27],
+            [36, 44, 6, 55, 20],
+            [3, 10, 43, 25, 39],
+            [41, 45, 15, 21, 8],
+            [18, 2, 61, 56, 14]]
 
 with open(roundConstantsFile, "r") as file:
     roundConstantsHex = file.read().split(",\n")
-    roundConstants = [hexToBinary(hex[2:]) for hex in roundConstantsHex]
+    roundConstantsHex = ["".join((hex[14:16],hex[12:14],hex[10:12],hex[8:10],hex[6:8],hex[4:6],hex[2:4],hex[0:2])) for hex in roundConstantsHex]
+    roundConstants = [convertHexToBinary(hex) for hex in roundConstantsHex]
 
 # calculates coordinates in strided array (string)
 def getCoord(i,j,k):
-    return (i % 5) * 5 * 64 + (j % 5) * 64 + 63-(k % 64)
+    return (i % 5) * 5 * 64 + (j % 5) * 64 + (k % 64)
 
 def getBlock(A,i,j):
-    return A[getCoord(i,j,0):getCoord(i,j,0)+1]
+    return A[getCoord(i,j,0):getCoord(i,j,0)+64]
 
 # rotation of words
 def pi(A):
@@ -85,10 +97,10 @@ def iota(A,r):
 # inplace rotation of the blocks
 def rho(A):
     out = ""
-    for i in range(25):
-        block = A[i*64:(i+1)*64]
-        block = block[:rotation[i]] + block[rotation[i]:]
-        out += block
+    for i in range(5):
+        for j in range(5):
+            # right shift
+            out += getBlock(A,i,j)[64-rotation[i][j]:]+getBlock(A,i,j)[:64-rotation[i][j]]
     return out
         
 # calculates parity of a column
@@ -100,7 +112,7 @@ def theta(A):
     out = ""
     for i in range(5):
         for j in range(5):
-            for k in range(63,-1,-1): # start at 63 so we move linearly through the array
+            for k in range(64): # start at 63 so we move linearly through the array
                 out += xor(A[getCoord(i,j,k)], parityCol(A,j-1,k),parityCol(A,j+1,k-1))
     return out
                 
@@ -126,43 +138,65 @@ def f(A):
 
 # Sha3-224
 def sha3_224(str):
-    # str = str + "01"
+    str = str + "01"
     blocks = pad(str)
     state = "0" * b
     for block in blocks:
         state = xor(state, block+("0"*c))
         state = f(state)
     return state[0:d]
-print(len("00000110"+ "0"*1136+"10000000"+"0"*448))
-test = binaryToHex(theta("00000110"+ "0"*1136+"10000000"+"0"*448))
-result = """
-06 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80
-0C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 80 0C 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80
-0C 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80
-00 00 00 00 00 00 00 80 0C 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80
-0C 00 00 00 00 00 00 00
-"""
-print(re.sub(r"[^A-Fa-f0-9]", '', result) == test)
+
+# input = """
+# 06 00 00 00 00 00 00 00 00 00 10 00 00 70 00 00
+# 00 00 03 00 00 00 00 00 06 00 10 00 00 00 00 00
+# 00 00 03 00 00 70 00 00 00 00 00 08 00 00 00 00
+# 00 00 C0 00 00 E0 00 00 00 00 00 00 00 00 00 00
+# 00 00 00 08 00 E0 00 00 00 00 C0 00 00 00 00 00
+# 0E 00 00 01 00 00 00 00 00 0C 00 00 00 00 00 00
+# 00 00 00 01 00 00 00 00 0E 0C 00 00 00 00 00 00
+# 00 00 00 00 00 00 00 00 00 1C 00 60 00 00 00 00
+# 00 40 00 00 00 00 00 00 00 1C 00 00 00 00 80 00
+# 00 40 00 60 00 00 00 00 00 00 00 00 00 00 80 00
+# 00 00 00 00 00 06 00 00 00 00 00 00 00 00 40 00
+# 1C 00 00 00 00 06 00 00 00 00 00 00 00 00 00 00
+# 1C 00 00 00 00 00 40 00
+# """
+
+# binInput = convertHexToBinary(input)
+# output = iota(binInput,0)
+# hexOutput = convertBinaryToHex(output)
+# result = """
+# 07 00 00 00 00 00 00 00 00 00 10 00 00 70 00 00
+# 00 00 03 00 00 00 00 00 06 00 10 00 00 00 00 00
+# 00 00 03 00 00 70 00 00 00 00 00 08 00 00 00 00
+# 00 00 C0 00 00 E0 00 00 00 00 00 00 00 00 00 00
+# 00 00 00 08 00 E0 00 00 00 00 C0 00 00 00 00 00
+# 0E 00 00 01 00 00 00 00 00 0C 00 00 00 00 00 00
+# 00 00 00 01 00 00 00 00 0E 0C 00 00 00 00 00 00
+# 00 00 00 00 00 00 00 00 00 1C 00 60 00 00 00 00
+# 00 40 00 00 00 00 00 00 00 1C 00 00 00 00 80 00
+# 00 40 00 60 00 00 00 00 00 00 00 00 00 00 80 00
+# 00 00 00 00 00 06 00 00 00 00 00 00 00 00 40 00
+# 1C 00 00 00 00 06 00 00 00 00 00 00 00 00 00 00
+# 1C 00 00 00 00 00 40 00
+# """
+# result = cleanHex(result)
+# print(result)
+# print()
+# print(hexOutput)
+# print(result == hexOutput)
 
 
 
-# if len(sys.argv) != 3:
-#     print("Usage: python sha3.py input_file output_file")
-#     sys.exit(1)
+if len(sys.argv) != 3:
+    print("Usage: python sha3.py input_file output_file")
+    sys.exit(1)
     
-# input_file = sys.argv[1]
-# output_file = sys.argv[2]
+input_file = sys.argv[1]
+output_file = sys.argv[2]
 
-# with open(input_file, "r") as file:
-#     data = hexToBinary(file.read())
+with open(input_file, "r") as file:
+    data = convertHexToBinary(file.read())
 
-# with open(output_file, "w") as file:
-#     file.write(binaryToHex(sha3_224(data)))
+with open(output_file, "w") as file:
+    file.write(convertBinaryToHex(sha3_224("")))

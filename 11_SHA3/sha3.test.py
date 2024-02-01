@@ -22,3 +22,5 @@ with open("input.txt", "r") as file:
 expect("sha3_224", hashlib.sha3_224(data.encode()).hexdigest(), output)
 
 os.remove("test.txt")
+
+print(hashlib.sha3_224("".encode()).hexdigest())
