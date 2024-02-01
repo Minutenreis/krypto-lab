@@ -90,3 +90,6 @@ Linearisierungsangriff (Teilschlüsselsuche):
 
 Note: output_file ist nur für meine Unittests gedacht und folgt nicht der Formattierung des Outputs in der Aufgabe
 
+### Sha3-224 (/11_SHA3)
+
+`python sha3.py input_file output_file`
