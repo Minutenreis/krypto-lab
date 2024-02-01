@@ -1,6 +1,7 @@
 import subprocess
 import os
 import hashlib
+import codecs
 
 def expect(name, expected, actual):
     print("  ",name, "\033[92mpassed" if expected == actual else "\033[91mfailed",'\033[0m')
@@ -11,16 +12,16 @@ def run(*args):
     subprocess.call(arguments, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
 
-run("sha3.py", "input.txt", "test.txt")
+run("sha3.py", "LoremIpsum5Hex.txt", "test.txt")
 
 with open("test.txt", "r") as file:
     output = file.read()
 
-with open("input.txt", "r") as file:
-    data = file.read()
-
-expect("sha3_224", hashlib.sha3_224(data.encode()).hexdigest(), output)
+with open("LoremIpsum5Hex.txt", "r") as file:
+    hexData = file.read()
+    hexData = hexData.replace(" ", "")
+    utf8Data = codecs.decode(hexData, "hex").decode("utf-8")
+    
+expect("sha3_224", hashlib.sha3_224(utf8Data.encode()).hexdigest(), output)
 
 os.remove("test.txt")
-
-print(hashlib.sha3_224("".encode()).hexdigest())
